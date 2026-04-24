@@ -50,6 +50,20 @@ namespace ARKServerCreationTool
 
                 list.Show();
 
+                if (ASCTGlobalConfig.Instance.SavedInterfaceIndex != null && ASCTGlobalConfig.Instance.SavedInterfaceMetric != null)
+                {
+                    var result = System.Windows.MessageBox.Show(
+                        "ASCT detected that a previous server session did not clean up network adapter settings.\n\n" +
+                        "Restore original adapter metrics?",
+                        "Network Settings Recovery",
+                        System.Windows.MessageBoxButton.YesNo);
+
+                    if (result == System.Windows.MessageBoxResult.Yes)
+                    {
+                        InterfaceMetricHelper.RestoreMetric();
+                    }
+                }
+
                 if (ASCTGlobalConfig.Instance.AllowAutomaticStart)
                 {
                     foreach (ASCTServerConfig server in ASCTGlobalConfig.Instance.Servers.Where(s => s.StartAutomatically))

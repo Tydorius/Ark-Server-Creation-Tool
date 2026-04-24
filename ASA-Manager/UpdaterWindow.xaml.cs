@@ -204,7 +204,7 @@ namespace ARKServerCreationTool
             updateProcess.StartInfo = new ProcessStartInfo
             {
                 FileName = depotDownloaderExePath,
-                Arguments = $"-app {config.serverAppID} -dir \"{targetServer.GameDirectory}\" {(config.validateUpdates ? "-validate" : string.Empty)}",
+                Arguments = $"-app {targetServer.AppID} -dir \"{targetServer.GameDirectory}\" {(config.validateUpdates ? "-validate" : string.Empty)}",
                 RedirectStandardOutput = false,
                 CreateNoWindow = false,
                 UseShellExecute = false
@@ -294,6 +294,7 @@ namespace ARKServerCreationTool
         public int targetServerID { get; private set; }
 
         public string serverName => targetServer.Name;
+        public string serverGameType => targetServer.GameType.ToString();
         public string serverCluster => targetServer.ClusterKey;
         public string serverRunning => targetServer.IsRunningToString;
     }

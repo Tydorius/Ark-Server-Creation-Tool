@@ -5,6 +5,12 @@ using System.Linq;
 
 namespace ARKServerCreationTool
 {
+    public enum ArkGameType
+    {
+        ASA,
+        ASE
+    }
+
     public class ASCTGlobalConfig
     {
         [JsonIgnore] public static ASCTGlobalConfig _instance = null;
@@ -46,6 +52,18 @@ namespace ARKServerCreationTool
             "Ragnarok_WP", "Valguero_WP", "LostColony_WP"
         };
 
+        [JsonIgnore] public static readonly string[] aseMaps = new string[]
+        {
+            "TheIsland", "ScorchedEarth_P", "TheCenter", "Aberration_P",
+            "Extinction", "Ragnarok", "Valguero_P", "Genesis1", "Genesis2",
+            "CrystalIsles", "LostIsland", "Fjordur"
+        };
+
+        public static string[] GetMapsForGameType(ArkGameType gameType)
+        {
+            return gameType == ArkGameType.ASA ? maps : aseMaps;
+        }
+
         public string ServersInstallationPath { get; set; } =
             Path.Combine(Directory.GetCurrentDirectory(), "InstalledServers");
 
@@ -56,6 +74,11 @@ namespace ARKServerCreationTool
 
         public bool AllowAutomaticStart { get; set; } = true;
         public bool PromptStartAllServersInCluster { get; set; } = true;
+
+        public bool EnableAseLocalPlay { get; set; } = false;
+
+        [JsonIgnore] public int? SavedInterfaceMetric { get; set; } = null;
+        [JsonIgnore] public int? SavedInterfaceIndex { get; set; } = null;
 
         public ushort AutoStartStaggerTime { get; set; } = 30;
 
@@ -118,6 +141,8 @@ namespace ARKServerCreationTool
         [JsonIgnore] public bool IsRunning => ProcessManager.IsRunning;
         [JsonIgnore] public string IsRunningToString => IsRunning ? "Running" : "Stopped";
 
+        public ArkGameType GameType { get; set; } = ArkGameType.ASA;
+
         public bool StartAutomatically { get; set; } = false;
 
         public int ID { get; private set; } //to be used as a primary key
@@ -130,8 +155,17 @@ namespace ARKServerCreationTool
         [JsonIgnore]
         public string EXEPath
         {
-            get { return Path.Combine(GameDirectory, ASCTGlobalConfig.relativeEXEPath); }
+            get
+            {
+                string exeName = GameType == ArkGameType.ASA
+                    ? "ArkAscendedServer.exe"
+                    : "ShooterGameServer.exe";
+                return Path.Combine(GameDirectory, $@"ShooterGame\Binaries\Win64\{exeName}");
+            }
         }
+
+        [JsonIgnore]
+        public ulong AppID => GameType == ArkGameType.ASA ? 2430930ul : 376030ul;
 
         public bool UseMultihome { get; set; } =
             false; //Whether the server should be launched with the MultihomeArgs argument
@@ -163,11 +197,14 @@ namespace ARKServerCreationTool
                 {
                     return customLaunchArgs;
                 }
+
+                if (GameType == ArkGameType.ASA)
+                {
+                    return $"\"{Map}{MultihomeArgs}\" \"-port={GamePort}\" -WinLiveMaxPlayers={Slots}{ModArgs}{ClusterArgs}{CrossplayArgs}{NoBattleyeArgs}{ActiveEventArgs} -log -servergamelog".Trim();
+                }
                 else
                 {
-                    return
-                        $"\"{Map}{MultihomeArgs}\" \"-port={GamePort}\" -WinLiveMaxPlayers={Slots}{ModArgs}{ClusterArgs}{CrossplayArgs}{NoBattleyeArgs}{ActiveEventArgs} -log -servergamelog"
-                            .Trim();
+                    return $"\"{Map}?MaxPlayers={Slots}{MultihomeArgs}\" \"-port={GamePort}\"{ModArgs}{ClusterArgs}{CrossplayArgs}{NoBattleyeArgs}{ActiveEventArgs} -log -servergamelog".Trim();
                 }
             }
         }
@@ -212,22 +249,33 @@ namespace ARKServerCreationTool
         {
             get
             {
-                if (UseMultihome && IPAddress != string.Empty)
+                bool useMultihome = UseMultihome;
+                string ip = IPAddress;
+
+                if (!useMultihome && GameType == ArkGameType.ASE && ASCTGlobalConfig.Instance.EnableAseLocalPlay)
                 {
-                    return $"?MultiHome={this.IPAddress}";
+                    useMultihome = true;
+                    ip = InterfaceMetricHelper.GetAutoDetectedLanIP();
+                    if (string.IsNullOrEmpty(ip)) return string.Empty;
                 }
 
-                else
+                if (useMultihome && !string.IsNullOrEmpty(ip))
                 {
-                    return string.Empty;
+                    return $"?MultiHome={ip}";
                 }
+
+                return string.Empty;
             }
         }
 
         [JsonIgnore]
         public string CrossplayArgs
         {
-            get { return AllowCrossplay ? " -ServerPlatform=ALL" : string.Empty; }
+            get
+            {
+                if (!AllowCrossplay) return string.Empty;
+                return GameType == ArkGameType.ASA ? " -ServerPlatform=ALL" : " -crossplay";
+            }
         }
 
         [JsonIgnore]

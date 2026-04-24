@@ -34,7 +34,7 @@ namespace ARKServerCreationTool
 
             IEnumerable<string> missingCerts = CertificateManagement.GetMissingCertificates();
 
-            if (missingCerts.Any()) 
+            if (missingCerts.Any() && config.Servers.Any(s => s.GameType == ArkGameType.ASA)) 
             {
                 DialogResult result = System.Windows.Forms.MessageBox.Show(
                     "The following certificates are missing: " + Environment.NewLine + Environment.NewLine +

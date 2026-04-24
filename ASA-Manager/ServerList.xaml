@@ -11,6 +11,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Game Port" Binding="{Binding GamePort}" />
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200" />
+                <DataGridTextColumn Header="Game" Binding="{Binding GameType}" Width="50" />
                 <DataGridTextColumn Header="Status" Binding="{Binding IsRunningToString, FallbackValue=Unknown, Mode=OneWay, TargetNullValue=Error}" />
                 <DataGridTextColumn Header="Map" Binding="{Binding Map}" />
                 <DataGridTextColumn Header="Cluster" Binding="{Binding ClusterKey}" Width="*" />

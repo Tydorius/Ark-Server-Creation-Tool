@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ARKServerCreationTool"
         mc:Ignorable="d"
-        Title="ASCT - Global Configuration" Height="283" Width="586" MinWidth="586"  MinHeight="237" 
+        Title="ASCT - Global Configuration" Height="348" Width="586" MinWidth="586"  MinHeight="302" 
         Closing="WindowClose">
     <Grid>
         <Label Content="ASCT Configuration" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" FontSize="16"/>
@@ -24,5 +24,13 @@
         <Button x:Name="btn_clusterDirBrowse" Content="Browse" Margin="0,79,10,0" Height="26" VerticalAlignment="Top" Click="btn_clusterDirBrowse_Click" HorizontalAlignment="Right" Width="98"/>
         <CheckBox x:Name="chk_AllowAutoLaunch" Content="Allow servers to be started automatically when ASCT is launched" HorizontalAlignment="Left" Margin="126,192,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="chk_PromptStartAllServers" Content="Prompt start all servers in cluster" HorizontalAlignment="Left" Margin="126,212,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="chk_AseLocalPlay" Content="" HorizontalAlignment="Left" Margin="126,245,0,0" VerticalAlignment="Top" Checked="chk_AseLocalPlay_Changed" Unchecked="chk_AseLocalPlay_Changed"/>
+        <Label Content="Local Play" HorizontalAlignment="Left" Margin="43,245,0,0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="txt_localPlayDesc" Margin="143,245,10,0" VerticalAlignment="Top" TextWrapping="Wrap" Foreground="#FF6D6D6D">
+            <Run Text="ASE + Wi-Fi: Auto-configures network adapter priority"/>
+            <LineBreak/>
+            <Run Text="so you can connect from the same machine." FontSize="9"/>
+        </TextBlock>
+        <Button x:Name="btn_localPlayHelp" Content="❓" HorizontalAlignment="Left" Margin="126,267,0,0" VerticalAlignment="Top" Width="24" Height="20" FontSize="11" Padding="0,-2,0,0" Click="btn_localPlayHelp_Click" ToolTip="More info about Local Play"/>
     </Grid>
 </Window>

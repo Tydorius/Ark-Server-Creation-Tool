@@ -15,6 +15,7 @@
         <DataGrid x:Name="dg_updatableServers" Margin="10,46,10,200" AutoGenerateColumns="False" SelectionMode="Extended" SelectionChanged="dg_updatableServers_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding serverName}" Width="*" />
+                <DataGridTextColumn Header="Game" Binding="{Binding serverGameType}" Width="*" />
                 <DataGridTextColumn Header="Cluster" Binding="{Binding serverCluster}" Width="*" />
                 <DataGridTextColumn Header="Status" Binding="{Binding serverRunning}" Width="*" />
             </DataGrid.Columns>

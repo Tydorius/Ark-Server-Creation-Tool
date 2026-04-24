@@ -133,7 +133,9 @@ namespace ARKServerCreationTool
                 if (result == MessageBoxResult.Yes)
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(GUSConfigPath));
-                    File.WriteAllText(GUSConfigPath, Properties.Resources.GUSConfigTemplate);
+                    File.WriteAllText(GUSConfigPath, targetServer.GameType == ArkGameType.ASA
+                        ? Properties.Resources.GUSConfigTemplate
+                        : Properties.Resources.ASE_GUSConfigTemplate);
                     Process.Start("notepad.exe", GUSConfigPath).WaitForExit();
                 }
             }

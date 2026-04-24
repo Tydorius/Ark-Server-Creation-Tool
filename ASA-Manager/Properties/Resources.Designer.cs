@@ -90,11 +90,61 @@ namespace ARKServerCreationTool.Properties {
         ///SFXAudioVolume=1.000000
         ///VoiceAudioVolume=1.000000
         ///SoundUIAudioVolume=1.000000
-        ///CharacterAudioVol [rest of string was truncated]&quot;;.
+        ///CharacterAudioVolume=1.000000
+        ///StructureTooltipMaxSpeedMultiply=0.000000
+        ///UIScaling=1.000000
+        ///UIQuickbarScaling=0.750000
+        ///CameraShakeScale=0.650000
+        ///bFirstPersonRiding=False
+        ///bThirdPersonPlayer=True
+        ///bShowStatusNotificationMessages=True
+        ///TrueSkyQuality=0.270000
+        ///FOVMultiplier=1.00 [rest of string was truncated].
         /// </summary>
         internal static string GUSConfigTemplate {
             get {
                 return ResourceManager.GetString("GUSConfigTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [ScalabilityGroups]
+        ///sg.ResolutionQuality=75
+        ///sg.ViewDistanceQuality=1
+        ///sg.AntiAliasingQuality=1
+        ///sg.ShadowQuality=2
+        ///sg.GlobalIlluminationQuality=3
+        ///sg.ReflectionQuality=3
+        ///sg.PostProcessQuality=1
+        ///sg.TextureQuality=2
+        ///sg.EffectsQuality=1
+        ///sg.FoliageQuality=2
+        ///sg.ShadingQuality=3
+        ///
+        ///[/Script/ShooterGame.ShooterGameUserSettings]
+        ///MasterAudioVolume=1.000000
+        ///MusicAudioVolume=0.800000
+        ///SFXAudioVolume=1.000000
+        ///VoiceAudioVolume=1.000000
+        ///SoundUIAudioVolume=1.000000
+        ///CharacterAudioVolume=1.000000
+        ///CameraShakeScale=0.650000
+        ///bFirstPersonRiding=False
+        ///bThirdPersonPlayer=True
+        ///bShowStatusNotificationMessages=True
+        ///FOVMultiplier=1.000000
+        ///GroundClutterDensity=1.000000
+        ///bMotionBlur=True
+        ///bUseDFAO=False
+        ///bUseSSAO=True
+        ///bShowChatBox=True
+        ///bCameraViewBob=True
+        ///bInvertLookY=False
+        ///bFloatin [rest of string was truncated].
+        /// </summary>
+        internal static string ASE_GUSConfigTemplate {
+            get {
+                return ResourceManager.GetString("ASE_GUSConfigTemplate", resourceCulture);
             }
         }
     }

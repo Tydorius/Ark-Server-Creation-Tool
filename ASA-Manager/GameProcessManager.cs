@@ -104,7 +104,25 @@ namespace ARKServerCreationTool
                     MessageBox.Show($"{targetServer.Name} is locked: \n{string.Join("\n", serverLocks.Select(l => l.Value))}", "Unable to start locked server");
                 }
                 else
-                {  
+                {
+                    if (targetServer.GameType == ArkGameType.ASE && ASCTGlobalConfig.Instance.EnableAseLocalPlay)
+                    {
+                        string ip = targetServer.UseMultihome && !string.IsNullOrEmpty(targetServer.IPAddress)
+                            ? targetServer.IPAddress
+                            : InterfaceMetricHelper.GetAutoDetectedLanIP();
+
+                        if (!string.IsNullOrEmpty(ip))
+                        {
+                            if (!InterfaceMetricHelper.ApplyLocalPlayMetric(ip))
+                            {
+                                MessageBox.Show(
+                                    "Failed to adjust network interface metric for local play. " +
+                                    "The server will start, but you may not be able to connect from this machine.",
+                                    "Local Play Warning");
+                            }
+                        }
+                    }
+
                     gameProcess = new Process();
                     ProcessStartInfo si = new ProcessStartInfo();
                     si.UseShellExecute = false;
@@ -126,7 +144,7 @@ namespace ARKServerCreationTool
                         try
                         {
                             var rule = FirewallManager.Instance.CreateApplicationRule(
-                                @"Rule for ARK SA (Created by ASCT)",
+                                $@"Rule for ARK {targetServer.GameType} Server (Created by ASCT)",
                                 FirewallAction.Allow,
                                 targetServer.EXEPath
                             );
@@ -163,6 +181,17 @@ namespace ARKServerCreationTool
             {                
                 gameProcess.Kill();
                 Thread.Sleep(tries * 10);
+            }
+
+            if (ASCTGlobalConfig.Instance.SavedInterfaceIndex != null)
+            {
+                if (!InterfaceMetricHelper.RestoreMetric())
+                {
+                    MessageBox.Show(
+                        "Failed to restore the original network interface metric. " +
+                        "You may need to manually reset it via Settings > Network > Change adapter options.",
+                        "Restore Warning");
+                }
             }
 
             return IsRunning;

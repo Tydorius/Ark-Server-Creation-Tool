@@ -45,6 +45,11 @@ namespace ARKServerCreationTool
 
             InitializeComponent();
 
+            cmbo_GameType.Items.Clear();
+            cmbo_GameType.Items.Add("Ark: Survival Ascended");
+            cmbo_GameType.Items.Add("Ark: Survival Evolved");
+            cmbo_GameType.SelectedIndex = targetServer.GameType == ArkGameType.ASA ? 0 : 1;
+
             txt_serverName.Text = targetServer.Name;
             txt_gameDir.Text = targetServer.GameDirectory;
             chkbx_overrideCommandline.IsChecked = targetServer.useCustomLaunchArgs;
@@ -99,14 +104,22 @@ namespace ARKServerCreationTool
         private void UpdateMapCombo()
         {
             cmbo_Map.Items.Clear();
+            string[] gameMaps = ASCTGlobalConfig.GetMapsForGameType(targetServer.GameType);
 
-            foreach (string map in config.Servers.Select(s => s.Map).Union(ASCTGlobalConfig.maps).Distinct().Where(s => !string.IsNullOrWhiteSpace(s)))
+            foreach (string map in config.Servers.Select(s => s.Map)
+                .Union(gameMaps)
+                .Distinct()
+                .Where(s => !string.IsNullOrWhiteSpace(s)))
             {
                 cmbo_Map.Items.Add(map);
             }
 
-            cmbo_Map.SelectedItem = targetServer.Map;
+            if (!gameMaps.Contains(targetServer.Map))
+            {
+                targetServer.Map = gameMaps[0];
+            }
 
+            cmbo_Map.SelectedItem = targetServer.Map;
             cmbo_Map.Items.Refresh();
         }
 
@@ -182,6 +195,7 @@ namespace ARKServerCreationTool
                 return;
             }
 
+            serv.GameType = cmbo_GameType.SelectedIndex == 0 ? ArkGameType.ASA : ArkGameType.ASE;
             serv.Name = txt_serverName.Text;
             serv.GameDirectory = txt_gameDir.Text;
             serv.ClusterKey = cmbo_clusterKey.Visibility == Visibility.Visible ? (string)cmbo_clusterKey.SelectedItem : txt_newClusterID.Text.Trim();
@@ -222,6 +236,7 @@ namespace ARKServerCreationTool
             if (!chkbx_overrideCommandline.IsChecked.Value && windowReady && targetServer != null)
             {
                 if (copyObject == null) copyObject = new ASCTServerConfig(targetServer.ID, targetServer.GamePort);
+                copyObject.GameType = targetServer.GameType;
 
                 UpdateServerObject(ref copyObject);
 
@@ -329,6 +344,18 @@ namespace ARKServerCreationTool
         private void chk_useMultiHome_Checked(object sender, RoutedEventArgs e)
         {
             txt_multiHomeIPaddress.IsEnabled = chk_useMultiHome.IsChecked.Value;
+            UpdateCommandLineBox();
+        }
+
+        private void cmbo_GameType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (targetServer == null || cmbo_GameType.SelectedIndex < 0) return;
+
+            targetServer.GameType = cmbo_GameType.SelectedIndex == 0
+                ? ArkGameType.ASA
+                : ArkGameType.ASE;
+
+            UpdateMapCombo();
             UpdateCommandLineBox();
         }
     }
